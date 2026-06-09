@@ -16,7 +16,7 @@ body{
 /* TÍTULO */
 header{
     padding:20px;
-    font-size:28px;
+    font-size:30px;
     font-weight:bold;
 }
 
@@ -35,7 +35,7 @@ header{
 /* BOTÕES */
 .opcao{
     display:block;
-    width:200px;
+    width:220px;
     margin:10px auto;
     padding:15px;
     font-size:20px;
@@ -46,14 +46,13 @@ header{
     transition:0.2s;
 }
 
-.opcao:hover{
-    transform: scale(1.1);
-}
-
-/* CORES */
 .op1{background:#3b82f6;}
 .op2{background:#22c55e;}
 .op3{background:#ef4444;}
+
+.opcao:hover{
+    transform:scale(1.1);
+}
 
 /* RESULTADO */
 #resultado{
@@ -74,27 +73,69 @@ header{
 
 <div id="pergunta">Qual começa com A?</div>
 
-<button class="opcao op1" onclick="resposta('errado')">🐱 Gato</button>
-<button class="opcao op2" onclick="resposta('certo')">🍎 Abacate</button>
-<button class="opcao op3" onclick="resposta('errado')">🐶 Cachorro</button>
+<button class="opcao op1" onclick="verificar(0)" id="op0"></button>
+<button class="opcao op2" onclick="verificar(1)" id="op1"></button>
+<button class="opcao op3" onclick="verificar(2)" id="op2"></button>
 
 <div id="resultado"></div>
 
 <script>
 
-function resposta(tipo){
+// base simples de palavras
+const palavras = [
+    {letra:"A", correto:"🍎 Abelha", erradas:["🐶 Cachorro","🐱 Gato"]},
+    {letra:"B", correto:"🍌 Banana", erradas:["🐸 Sapo","🐶 Cachorro"]},
+    {letra:"C", correto:"🐱 Gato", erradas:["🍎 Maçã","🚗 Carro"]},
+    {letra:"D", correto:"🦕 Dinossauro", erradas:["🐶 Cachorro","🍌 Banana"]},
+    {letra:"E", correto:"🐘 Elefante", erradas:["🐱 Gato","🍎 Maçã"]}
+];
 
-    if(tipo === "certo"){
-        document.getElementById("resultado").innerText = "✅ Muito bem!";
-        falar("Muito bem");
-    }
-    else{
-        document.getElementById("resultado").innerText = "❌ Tente de novo!";
-        falar("Tente de novo");
+let atual = {};
+let respostaCorreta = 0;
+
+// iniciar jogo automaticamente
+novaRodada();
+
+function novaRodada(){
+
+    document.getElementById("resultado").innerText = "";
+
+    // sorteia pergunta
+    atual = palavras[Math.floor(Math.random()*palavras.length)];
+
+    document.getElementById("letra").innerText = atual.letra;
+    document.getElementById("pergunta").innerText = 
+        "Qual começa com " + atual.letra + "?";
+
+    falar("Qual começa com " + atual.letra);
+
+    // mistura opções
+    let opcoes = [atual.correto, ...atual.erradas];
+    opcoes.sort(()=> Math.random()-0.5);
+
+    respostaCorreta = opcoes.indexOf(atual.correto);
+
+    // coloca nos botões
+    for(let i=0;i<3;i++){
+        document.getElementById("op"+i).innerText = opcoes[i];
     }
 }
 
-// 🔊 voz (ótimo para crianças)
+// verificar resposta
+function verificar(index){
+
+    if(index === respostaCorreta){
+        document.getElementById("resultado").innerText = "✅ Muito bem!";
+        falar("Muito bem");
+    }else{
+        document.getElementById("resultado").innerText = "❌ Tente de novo!";
+        falar("Tente de novo");
+    }
+
+    setTimeout(novaRodada, 2000);
+}
+
+// voz
 function falar(texto){
     let speech = new SpeechSynthesisUtterance(texto);
     speech.lang = "pt-BR";
