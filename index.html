@@ -1,1 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>🔤 Jogo de Letras</title>
 
+<style>
+
+body{
+    font-family: Arial;
+    margin:0;
+    background: linear-gradient(180deg, #fef3c7, #fde68a);
+    text-align:center;
+}
+
+/* TÍTULO */
+header{
+    padding:20px;
+    font-size:28px;
+    font-weight:bold;
+}
+
+/* LETRA GRANDE */
+#letra{
+    font-size:120px;
+    margin:20px;
+    color:#dc2626;
+}
+
+/* PERGUNTA */
+#pergunta{
+    font-size:24px;
+}
+
+/* BOTÕES */
+.opcao{
+    display:block;
+    width:200px;
+    margin:10px auto;
+    padding:15px;
+    font-size:20px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    color:white;
+    transition:0.2s;
+}
+
+.opcao:hover{
+    transform: scale(1.1);
+}
+
+/* CORES */
+.op1{background:#3b82f6;}
+.op2{background:#22c55e;}
+.op3{background:#ef4444;}
+
+/* RESULTADO */
+#resultado{
+    margin-top:20px;
+    font-size:26px;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>🔤 Jogo de Letras</header>
+
+<div id="letra">A</div>
+
+<div id="pergunta">Qual começa com A?</div>
+
+<button class="opcao op1" onclick="resposta('errado')">🐱 Gato</button>
+<button class="opcao op2" onclick="resposta('certo')">🍎 Abacate</button>
+<button class="opcao op3" onclick="resposta('errado')">🐶 Cachorro</button>
+
+<div id="resultado"></div>
+
+<script>
+
+function resposta(tipo){
+
+    if(tipo === "certo"){
+        document.getElementById("resultado").innerText = "✅ Muito bem!";
+        falar("Muito bem");
+    }
+    else{
+        document.getElementById("resultado").innerText = "❌ Tente de novo!";
+        falar("Tente de novo");
+    }
+}
+
+// 🔊 voz (ótimo para crianças)
+function falar(texto){
+    let speech = new SpeechSynthesisUtterance(texto);
+    speech.lang = "pt-BR";
+    speech.rate = 0.9;
+    speechSynthesis.speak(speech);
+}
+
+</script>
+
+</body>
+</html>
