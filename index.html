@@ -2,234 +2,218 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>🔤 Letras Craft</title>
+<title>🎮 Jogos da Liz e Bia</title>
 
 <style>
 
-/* FUNDO */
 body{
-    font-family: "Courier New", monospace;
     margin:0;
-    background:#87ceeb; /* céu minecraft */
+    font-family: Arial;
+    background:#87ceeb;
     text-align:center;
 }
 
-/* HEADER */
-header{
-    padding:20px;
+/* TELA */
+.tela{
+    display:none;
+}
+
+.ativo{
+    display:block;
+}
+
+/* MENU */
+#menu{
+    padding-top:80px;
+}
+
+h1{
     font-size:30px;
-    font-weight:bold;
-    background:#4ade80;
-    border-bottom:5px solid #166534;
+}
+
+/* BOTÕES */
+.botao{
+    display:block;
+    width:250px;
+    margin:15px auto;
+    padding:18px;
+    font-size:22px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    background:#22c55e;
+    color:white;
+}
+
+/* VOLTAR */
+#voltar{
+    margin-top:20px;
+    padding:10px 20px;
 }
 
 /* LETRA */
 #letra{
     font-size:120px;
-    margin:20px;
     color:#065f46;
 }
 
-/* PERGUNTA */
-#pergunta{
-    font-size:24px;
-}
-
-/* BOTÕES BLOCOS */
 .opcao{
     display:block;
-    width:260px;
-    margin:12px auto;
-    padding:18px;
-    font-size:22px;
+    width:240px;
+    margin:10px auto;
+    padding:15px;
+    font-size:20px;
     border:none;
-    cursor:pointer;
-
-    background:#22c55e;
-    border:4px solid #166534;
-    box-shadow: 0 5px #14532d;
-
+    border-radius:12px;
     color:white;
+    cursor:pointer;
 }
 
-.opcao:active{
-    transform:translateY(3px);
-    box-shadow:0 2px #14532d;
-}
+.op1{background:#3b82f6;}
+.op2{background:#22c55e;}
+.op3{background:#ef4444;}
 
-/* VARIAÇÃO CORES */
-.op1{background:#4ade80;}
-.op2{background:#38bdf8;}
-.op3{background:#f97316;}
-
-/* RESULTADO */
-#resultado{
-    margin-top:20px;
-    font-size:28px;
-    font-weight:bold;
-}
-
-/* PLACAR */
 #placar{
+    font-size:22px;
     margin-top:10px;
-    font-size:24px;
 }
 
-/* ANIMAÇÃO PULO */
-.pular{
-    animation: pular 0.4s;
-}
-
-@keyframes pular{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.2);}
-    100%{transform:scale(1);}
-}
-
-/* TELA PISCANDO */
-.acerto{
-    background:#86efac !important;
-}
-
-.erro{
-    background:#fca5a5 !important;
-}
-
-/* FOOTER */
 footer{
-    position: fixed;
-    bottom: 8px;
-    width: 100%;
-    font-size: 14px;
-    color:#065f46;
-    font-weight:bold;
+    position:fixed;
+    bottom:8px;
+    width:100%;
+    font-size:14px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<header>🟩 Letras Craft</header>
+<!-- MENU -->
+<div id="menu" class="tela ativo">
+    <h1>🎮 Jogos da Liz e Bia</h1>
 
-<div id="letra">A</div>
+    <button class="botao" onclick="abrir('letras')">🔤 Letras</button>
+    <button class="botao" onclick="abrir('reflexo')">⚡ Reflexo</button>
+</div>
 
-<div id="pergunta">Qual começa com A?</div>
+<!-- JOGO LETRAS -->
+<div id="letras" class="tela">
 
-<button class="opcao op1" onclick="verificar(0)" id="op0"></button>
-<button class="opcao op2" onclick="verificar(1)" id="op1"></button>
-<button class="opcao op3" onclick="verificar(2)" id="op2"></button>
+    <h2>🔤 Letras</h2>
 
-<div id="resultado"></div>
-<div id="placar">⭐ Pontos: 0</div>
+    <div id="letra">A</div>
+    <div id="pergunta"></div>
+
+    <button class="opcao op1" onclick="resposta(0)" id="op0"></button>
+    <button class="opcao op2" onclick="resposta(1)" id="op1"></button>
+    <button class="opcao op3" onclick="resposta(2)" id="op2"></button>
+
+    <div id="placar">⭐ 0</div>
+
+    <button id="voltar" onclick="voltar()">⬅ Voltar</button>
+</div>
+
+<!-- JOGO REFLEXO -->
+<div id="reflexo" class="tela">
+
+    <h2>⚡ Reflexo</h2>
+
+    <button id="botao" onclick="clicou()" 
+    style="width:200px;height:200px;border-radius:50%;background:red;color:white;font-size:22px;">
+    ESPERE
+    </button>
+
+    <div id="status"></div>
+
+    <button onclick="iniciar()">COMEÇAR</button>
+
+    <button id="voltar" onclick="voltar()">⬅ Voltar</button>
+</div>
 
 <footer>desenvolvido pelo pai de Liz e Bia ❤️</footer>
 
 <script>
 
-// SOM
-function somAcerto(){
-    let a = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3d6d8c4cb4.mp3");
-    a.play();
+/* TROCA DE TELA */
+function abrir(id){
+    document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativo"));
+    document.getElementById(id).classList.add("ativo");
 }
 
-function somErro(){
-    let a = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_1cc5c7c7c9.mp3");
-    a.play();
+function voltar(){
+    abrir("menu");
 }
 
-// BASE
-const palavras = [
+/* ================= LETRAS ================= */
+
+let palavras = [
     {letra:"A", correto:"🍎 Abelha", erradas:["🐶 Cachorro","🐱 Gato"]},
     {letra:"B", correto:"🍌 Banana", erradas:["🐸 Sapo","🐶 Cachorro"]},
-    {letra:"C", correto:"🐱 Cachorro", erradas:["🍎 Maçã","🚗 Carro"]},
-    {letra:"D", correto:"🦕 Dinossauro", erradas:["🐶 Cachorro","🍌 Banana"]},
-    {letra:"E", correto:"🐘 Elefante", erradas:["🐱 Gato","🍎 Maçã"]},
-    {letra:"F", correto:"🐟 Peixe", erradas:["🐶 Cachorro","🍎 Maçã"]},
+    {letra:"C", correto:"🐱 Cachorro", erradas:["🍎 Maçã","🚗 Carro"]}
 ];
 
-let atual;
 let correta;
 let pontos = 0;
 
-// NOVA RODADA
 function nova(){
 
-    document.body.classList.remove("acerto","erro");
-
-    document.getElementById("resultado").innerText = "";
-
-    atual = palavras[Math.floor(Math.random()*palavras.length)];
+    let atual = palavras[Math.floor(Math.random()*palavras.length)];
 
     document.getElementById("letra").innerText = atual.letra;
+    document.getElementById("pergunta").innerText = "Qual começa com " + atual.letra;
 
-    document.getElementById("pergunta").innerText =
-        "Qual começa com " + atual.letra + "?";
+    let op = [atual.correto, ...atual.erradas];
+    op.sort(()=>Math.random()-0.5);
 
-    falar("Qual começa com " + atual.letra);
-
-    let opcoes = [atual.correto, ...atual.erradas];
-    opcoes.sort(()=>Math.random()-0.5);
-
-    correta = opcoes.indexOf(atual.correto);
+    correta = op.indexOf(atual.correto);
 
     for(let i=0;i<3;i++){
-        document.getElementById("op"+i).innerText = opcoes[i];
+        document.getElementById("op"+i).innerText = op[i];
     }
 }
 
-// RESPOSTA
-function verificar(i){
-
-    let letra = document.getElementById("letra");
-
-    letra.classList.add("pular");
-
-    setTimeout(()=>letra.classList.remove("pular"),200);
+function resposta(i){
 
     if(i === correta){
-
         pontos++;
-
-        document.body.classList.add("acerto");
-
-        document.getElementById("resultado").innerText = "🎉 Boa!";
-        somAcerto();
-        falar("Boa");
-
     }else{
-
         pontos = 0;
-
-        document.body.classList.add("erro");
-
-        document.getElementById("resultado").innerText = "❌ Ops!";
-        somErro();
-        falar("Tente novamente");
     }
 
-    atualizar();
-
-    setTimeout(nova,1500);
+    document.getElementById("placar").innerText = "⭐ " + pontos;
+    nova();
 }
 
-// PLACAR
-function atualizar(){
-    document.getElementById("placar").innerText = "⭐ Pontos: " + pontos;
+/* ================= REFLEXO ================= */
+
+let ativo = false;
+
+function iniciar(){
+    document.getElementById("status").innerText = "Prepare-se...";
+
+    setTimeout(()=>{
+        document.getElementById("botao").style.background = "green";
+        document.getElementById("botao").innerText = "AGORA!";
+        ativo = true;
+    }, Math.random()*2000+1000);
 }
 
-// VOZ
-function falar(txt){
-    let s = new SpeechSynthesisUtterance(txt);
-    s.lang = "pt-BR";
-    speechSynthesis.speak(s);
+function clicou(){
+
+    if(ativo){
+        document.getElementById("status").innerText = "🔥 Rápido!";
+    }else{
+        document.getElementById("status").innerText = "❌ Cedo!";
+    }
+
 }
 
-// START
 nova();
 
 </script>
 
 </body>
 </html>
-    
