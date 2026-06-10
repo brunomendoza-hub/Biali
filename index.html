@@ -2,63 +2,65 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>🔤 Jogo das Letras</title>
+<title>🔤 Letras Craft</title>
 
 <style>
 
+/* FUNDO */
 body{
-    font-family: Arial;
+    font-family: "Courier New", monospace;
     margin:0;
-    background: linear-gradient(180deg, #fde68a, #fef3c7);
+    background:#87ceeb; /* céu minecraft */
     text-align:center;
 }
 
-/* TÍTULO */
+/* HEADER */
 header{
     padding:20px;
-    font-size:32px;
+    font-size:30px;
     font-weight:bold;
+    background:#4ade80;
+    border-bottom:5px solid #166534;
 }
 
-/* LETRA GIGANTE */
+/* LETRA */
 #letra{
-    font-size:130px;
-    color:#dc2626;
-    animation: pular 1s infinite;
-}
-
-@keyframes pular{
-    0%,100%{transform:translateY(0);}
-    50%{transform:translateY(-10px);}
+    font-size:120px;
+    margin:20px;
+    color:#065f46;
 }
 
 /* PERGUNTA */
 #pergunta{
-    font-size:26px;
+    font-size:24px;
 }
 
-/* BOTÕES */
+/* BOTÕES BLOCOS */
 .opcao{
     display:block;
-    width:240px;
+    width:260px;
     margin:12px auto;
     padding:18px;
     font-size:22px;
     border:none;
-    border-radius:15px;
     cursor:pointer;
+
+    background:#22c55e;
+    border:4px solid #166534;
+    box-shadow: 0 5px #14532d;
+
     color:white;
-    font-weight:bold;
-    transition:0.2s;
 }
 
-.op1{background:#3b82f6;}
-.op2{background:#22c55e;}
-.op3{background:#ef4444;}
-
-.opcao:hover{
-    transform:scale(1.1);
+.opcao:active{
+    transform:translateY(3px);
+    box-shadow:0 2px #14532d;
 }
+
+/* VARIAÇÃO CORES */
+.op1{background:#4ade80;}
+.op2{background:#38bdf8;}
+.op3{background:#f97316;}
 
 /* RESULTADO */
 #resultado{
@@ -67,36 +69,48 @@ header{
     font-weight:bold;
 }
 
-/* ESTRELA */
-#estrela{
-    font-size:70px;
-    display:none;
-    animation: explodir 0.6s;
+/* PLACAR */
+#placar{
+    margin-top:10px;
+    font-size:24px;
 }
 
-@keyframes explodir{
-    0%{transform:scale(0);}
-    100%{transform:scale(1.5);}
+/* ANIMAÇÃO PULO */
+.pular{
+    animation: pular 0.4s;
+}
+
+@keyframes pular{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.2);}
+    100%{transform:scale(1);}
+}
+
+/* TELA PISCANDO */
+.acerto{
+    background:#86efac !important;
+}
+
+.erro{
+    background:#fca5a5 !important;
 }
 
 /* FOOTER */
 footer{
     position: fixed;
-    bottom: 10px;
+    bottom: 8px;
     width: 100%;
-    text-align: center;
-    font-size: 16px;
-    color: #92400e;
-    font-weight: bold;
+    font-size: 14px;
+    color:#065f46;
+    font-weight:bold;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<header>🔤 Jogo das Letras</header>
+<header>🟩 Letras Craft</header>
 
 <div id="letra">A</div>
 
@@ -107,24 +121,24 @@ footer{
 <button class="opcao op3" onclick="verificar(2)" id="op2"></button>
 
 <div id="resultado"></div>
-<div id="estrela">⭐</div>
+<div id="placar">⭐ Pontos: 0</div>
 
 <footer>desenvolvido pelo pai de Liz e Bia ❤️</footer>
 
 <script>
 
-// 🔊 sons
+// SOM
 function somAcerto(){
-    let audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3d6d8c4cb4.mp3");
-    audio.play();
+    let a = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3d6d8c4cb4.mp3");
+    a.play();
 }
 
 function somErro(){
-    let audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_1cc5c7c7c9.mp3");
-    audio.play();
+    let a = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_1cc5c7c7c9.mp3");
+    a.play();
 }
 
-// base de palavras simples
+// BASE
 const palavras = [
     {letra:"A", correto:"🍎 Abelha", erradas:["🐶 Cachorro","🐱 Gato"]},
     {letra:"B", correto:"🍌 Banana", erradas:["🐸 Sapo","🐶 Cachorro"]},
@@ -132,16 +146,17 @@ const palavras = [
     {letra:"D", correto:"🦕 Dinossauro", erradas:["🐶 Cachorro","🍌 Banana"]},
     {letra:"E", correto:"🐘 Elefante", erradas:["🐱 Gato","🍎 Maçã"]},
     {letra:"F", correto:"🐟 Peixe", erradas:["🐶 Cachorro","🍎 Maçã"]},
-    {letra:"G", correto:"🐱 Gato", erradas:["🍌 Banana","🚗 Carro"]}
 ];
 
 let atual;
 let correta;
+let pontos = 0;
 
-// nova rodada
+// NOVA RODADA
 function nova(){
 
-    document.getElementById("estrela").style.display = "none";
+    document.body.classList.remove("acerto","erro");
+
     document.getElementById("resultado").innerText = "";
 
     atual = palavras[Math.floor(Math.random()*palavras.length)];
@@ -163,37 +178,58 @@ function nova(){
     }
 }
 
-// verificar resposta
+// RESPOSTA
 function verificar(i){
 
-    let estrela = document.getElementById("estrela");
+    let letra = document.getElementById("letra");
+
+    letra.classList.add("pular");
+
+    setTimeout(()=>letra.classList.remove("pular"),200);
 
     if(i === correta){
-        document.getElementById("resultado").innerText = "🎉 Muito bem!";
-        estrela.style.display = "block";
+
+        pontos++;
+
+        document.body.classList.add("acerto");
+
+        document.getElementById("resultado").innerText = "🎉 Boa!";
         somAcerto();
-        falar("Muito bem");
+        falar("Boa");
+
     }else{
-        document.getElementById("resultado").innerText = "❌ Tente novamente!";
+
+        pontos = 0;
+
+        document.body.classList.add("erro");
+
+        document.getElementById("resultado").innerText = "❌ Ops!";
         somErro();
         falar("Tente novamente");
     }
 
-    setTimeout(nova, 2000);
+    atualizar();
+
+    setTimeout(nova,1500);
 }
 
-// voz
+// PLACAR
+function atualizar(){
+    document.getElementById("placar").innerText = "⭐ Pontos: " + pontos;
+}
+
+// VOZ
 function falar(txt){
     let s = new SpeechSynthesisUtterance(txt);
     s.lang = "pt-BR";
     speechSynthesis.speak(s);
 }
 
-// iniciar
+// START
 nova();
 
 </script>
 
 </body>
 </html>
-``
+    
